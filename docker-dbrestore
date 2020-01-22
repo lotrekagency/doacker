@@ -1,0 +1,37 @@
+#! /bin/sh
+
+usage="Restore dump database into a container
+
+Usage:
+  $(basename "$0") CONTAINER DBDUMP_FILE
+  $(basename "$0") -h
+"
+
+if [ "$#" -ne 2 ]; then
+  echo "$usage" >&2
+  exit 1
+fi
+
+while getopts ':h:' option; do
+  case "$option" in
+    h) echo "$usage"
+      exit
+      ;;
+    \?) printf "illegal option: -%s\n" "$OPTARG" >&2
+      echo "$usage" >&2
+      exit 1
+      ;;
+  esac
+done
+
+echo "📠 Restore dump $2 in container $1..."
+
+docker exec $1 sh -c 'mkdir -p /dbdumps/' || exit 1
+
+docker cp $2 $1:/dbdumps/latest.sql || exit 1
+
+docker exec $1 sh -c 'psql -U $POSTGRES_USER $POSTGRES_DB < /dbdumps/latest.sql' || exit 1
+
+docker exec $1 sh -c 'rm -rf /dbdumps/' || exit 1
+
+echo "✅ Dump db restored in $1..."

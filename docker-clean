@@ -1,0 +1,6 @@
+#! /bin/sh
+
+echo "🧼 Cleaning all containers"
+
+./docker-stopall
+./docker-removeall

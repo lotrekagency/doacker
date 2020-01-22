@@ -1,0 +1,33 @@
+#! /bin/sh
+
+usage="Dump database from a container
+
+Usage:
+  $(basename "$0") CONTAINER
+  $(basename "$0") -h
+"
+
+if [ "$#" -ne 1 ]; then
+  echo "$usage" >&2
+  exit 1
+fi
+
+while getopts ':h:' option; do
+  case "$option" in
+    h) echo "$usage"
+      exit
+      ;;
+    \?) printf "illegal option: -%s\n" "$OPTARG" >&2
+      echo "$usage" >&2
+      exit 1
+      ;;
+  esac
+done
+
+echo "💾 Dump db from container $1..."
+
+file_name="$1_$(date "+%F_%T").sql"
+
+docker exec $1 sh -c 'pg_dump $POSTGRES_DB -U $POSTGRES_USER' > "$file_name" || exit 1
+
+echo "✅ Dump db stored in $file_name..."
