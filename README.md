@@ -1,6 +1,8 @@
 # Doacker
 
-This is a set of utilities used internally to manage Docker containers
+Pure goodness! 🐳
+
+Our internal set of utilities to manage Docker containers
 
 ## Installation
 
