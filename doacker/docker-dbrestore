@@ -30,6 +30,10 @@ docker exec $1 sh -c 'mkdir -p /dbdumps/' || exit 1
 
 docker cp $2 $1:/dbdumps/latest.sql || exit 1
 
+docker exec $1 sh -c 'dropdb $POSTGRES_DB -U $POSTGRES_USER' || exit 1
+
+docker exec $1 sh -c 'createdb $POSTGRES_DB -U $POSTGRES_USER' || exit 1
+
 docker exec $1 sh -c 'psql -U $POSTGRES_USER $POSTGRES_DB < /dbdumps/latest.sql' || exit 1
 
 docker exec $1 sh -c 'rm -rf /dbdumps/' || exit 1
