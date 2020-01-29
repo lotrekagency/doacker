@@ -24,18 +24,24 @@ while getopts ':h:' option; do
   esac
 done
 
-echo "📠 Restore dump $2 in container $1..."
+echo "🏗  Restore dump $2 in container $1..."
 
 docker exec $1 sh -c 'mkdir -p /dbdumps/' || exit 1
 
 docker cp $2 $1:/dbdumps/latest.sql || exit 1
 
-docker exec $1 sh -c 'dropdb $POSTGRES_DB -U $POSTGRES_USER' || exit 1
-
-docker exec $1 sh -c 'createdb $POSTGRES_DB -U $POSTGRES_USER' || exit 1
-
-docker exec $1 sh -c 'psql -U $POSTGRES_USER $POSTGRES_DB < /dbdumps/latest.sql' || exit 1
-
+if docker exec $1 sh -c 'command -v psql >> /dev/null'; then
+  docker exec $1 sh -c 'dropdb $POSTGRES_DB -U $POSTGRES_USER' || exit 1
+  docker exec $1 sh -c 'createdb $POSTGRES_DB -U $POSTGRES_USER' || exit 1
+  docker exec $1 sh -c 'psql -U $POSTGRES_USER $POSTGRES_DB < /dbdumps/latest.sql' || exit 1
+elif docker exec $1 sh -c 'command -v mysql >> /dev/null'; then
+  docker exec $1 sh -c 'export MYSQL_PWD=$MYSQL_PASSWORD && echo "DROP DATABASE $MYSQL_DATABASE" | mysql -u $MYSQL_USER' || exit 1
+  docker exec $1 sh -c 'export MYSQL_PWD=$MYSQL_PASSWORD && echo "CREATE DATABASE $MYSQL_DATABASE" | mysql -u $MYSQL_USER' || exit 1
+  docker exec $1 sh -c 'export MYSQL_PWD=$MYSQL_PASSWORD && cat /dbdumps/latest.sql | mysql -u $MYSQL_USER $MYSQL_DATABASE' || exit 1
+else
+  echo "❌ Not a supported db"
+  exit 1
+fi
 docker exec $1 sh -c 'rm -rf /dbdumps/' || exit 1
 
 echo "✅ Dump db restored in $1..."
