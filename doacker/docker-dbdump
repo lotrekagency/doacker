@@ -29,7 +29,7 @@ echo "💾 Dump db from container $1..."
 file_name="$1_$(date "+%F_%T").sql"
 
 if docker exec $1 sh -c 'command -v pg_dump >> /dev/null'; then
-  docker exec $1 sh -c 'pg_dump $POSTGRES_DB -U $POSTGRES_USER' > "$file_name" || exit 1
+  docker exec $1 sh -c 'pg_dump $POSTGRES_DB -U $POSTGRES_USER --clean' > "$file_name" || exit 1
 elif docker exec $1 sh -c 'command -v mysqldump >> /dev/null'; then
   docker exec $1 sh -c 'mysqldump -u $MYSQL_USER --password="$MYSQL_PASSWORD" $MYSQL_DATABASE' > "$file_name" || exit 1
 else
