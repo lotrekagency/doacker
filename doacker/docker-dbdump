@@ -26,7 +26,7 @@ done
 
 echo "💾 Dump db from container $1..."
 
-file_name="$1_$(date "+%F_%T").sql"
+file_name="$1_$(date "+%F_%H-%M-%S").sql"
 
 if docker exec $1 sh -c 'command -v pg_dump >> /dev/null'; then
   docker exec $1 sh -c 'pg_dump $POSTGRES_DB -U $POSTGRES_USER --clean' > "$file_name" || exit 1
