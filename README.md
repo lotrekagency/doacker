@@ -63,7 +63,7 @@ docker-dbdump <container>
 
 ### Docker Db Restore
 
-This command restores a database dump. Only PostgreSQL and MySQL supported.
+This command restores a database dump.
 
 ```sh
 docker-dbrestore <container> <sqldump>
