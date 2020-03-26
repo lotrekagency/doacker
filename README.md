@@ -1,8 +1,6 @@
-# Doacker
+# Doacker 🍫
 
-Pure goodness! 🐳
-
-Our internal set of utilities to manage Docker containers
+Pure goodness! 🐳Our internal set of utilities to manage Docker containers
 
 ## Installation
 
@@ -10,7 +8,9 @@ Our internal set of utilities to manage Docker containers
 sudo curl -L https://github.com/lotrekagency/doacker/archive/master.tar.gz | tar xvfz - --strip 2 -C /usr/local/bin/
 ```
 
-## Utilities
+## 📦Manage containers
+
+A set of utilities to manage containers.
 
 ### Docker Stop All
 
@@ -36,9 +36,26 @@ This command stop and removes all containers
 docker-clean
 ```
 
+## 🗃Dump and Restore databases
+
+A set of utilities to dump and restore database, very useful during nightly backups.
+
+⚠️ Only *PostgreSQL* and *MySQL* supported at the moment. 
+
+Required env variables for *MySQL*
+
+- MYSQL_DATABASE
+- MYSQL_USER
+- MYSQL_PASSWORD
+
+Required env variables for *PostgreSQL*
+
+- POSTGRES_USER
+- POSTGRES_DB
+
 ### Docker Db Dump
 
-This command creates a database sql dump. Only PostgreSQL and MySQL supported.
+This command creates a database sql dump.
 
 ```sh
 docker-dbdump <container>
