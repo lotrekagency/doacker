@@ -2,5 +2,5 @@
 
 echo "🧼 Cleaning all containers"
 
-./docker-stopall
-./docker-removeall
+docker-stopall
+docker-removeall
