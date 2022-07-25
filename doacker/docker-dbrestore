@@ -31,7 +31,7 @@ docker exec $1 sh -c 'mkdir -p /dbdumps/' || exit 1
 docker cp $2 $1:/dbdumps/latest.sql || exit 1
 
 if docker exec $1 sh -c 'command -v psql >> /dev/null'; then
-  docker exec $1 sh -c 'psql -U $POSTGRES_USER $POSTGRES_DB < /dbdumps/latest.sql' || exit 1
+  docker exec $1 sh -c 'psql -U $POSTGRES_USER $POSTGRES_DB < /dbdumps/latest.sql' || docker exec $1 sh -c 'pg_restore --verbose --clean --no-acl --no-owner -h localhost -U $POSTGRES_USER -d $POSTGRES_DB < /dbdumps/latest.sql' || exit 1
 elif docker exec $1 sh -c 'command -v mysql >> /dev/null'; then
   docker exec $1 sh -c 'export MYSQL_PWD=$MYSQL_PASSWORD && cat /dbdumps/latest.sql | mysql -u $MYSQL_USER $MYSQL_DATABASE' || exit 1
 else
