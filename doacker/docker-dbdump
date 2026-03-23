@@ -26,14 +26,20 @@ done
 
 echo "💾 Dump db from container $1..."
 
-file_name="$1_$(date "+%F_%H-%M-%S").sql"
+base_name="$1_$(date "+%F_%H-%M-%S")"
 
 if docker exec $1 sh -c 'command -v pg_dump >> /dev/null'; then
+  file_name="$base_name.sql"
   docker exec $1 sh -c 'pg_dump $POSTGRES_DB -U $POSTGRES_USER --clean' > "$file_name" || exit 1
 elif docker exec $1 sh -c 'command -v mariadb-dump >> /dev/null'; then
+  file_name="$base_name.sql"
   docker exec $1 sh -c 'MYSQL_PWD=$MYSQL_PASSWORD mariadb-dump -u $MYSQL_USER $MYSQL_DATABASE' > "$file_name" || exit 1
 elif docker exec $1 sh -c 'command -v mysqldump >> /dev/null'; then
+  file_name="$base_name.sql"
   docker exec $1 sh -c 'MYSQL_PWD=$MYSQL_PASSWORD mysqldump -u $MYSQL_USER $MYSQL_DATABASE' > "$file_name" || exit 1
+elif docker exec $1 sh -c 'command -v mongodump >> /dev/null'; then
+  file_name="$base_name.archive"
+  docker exec $1 sh -c 'mongodump --archive --username=$MONGO_INITDB_ROOT_USERNAME --password=$MONGO_INITDB_ROOT_PASSWORD --authenticationDatabase=admin --db=$MONGO_INITDB_DATABASE' > "$file_name" || exit 1
 else
   echo "❌ Not a supported db"
   exit 1
